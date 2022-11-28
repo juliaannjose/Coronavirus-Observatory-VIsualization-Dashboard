@@ -2,3 +2,5 @@
 
 #ignore dataset files
 data/*
+output/Cosine_Sim_results
+output/L2_results
