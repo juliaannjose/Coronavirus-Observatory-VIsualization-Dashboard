@@ -1,0 +1,6 @@
+.DS_Store
+
+#ignore dataset files
+data/*
+output/Cosine_Sim_results.png
+output/L2_results.png
