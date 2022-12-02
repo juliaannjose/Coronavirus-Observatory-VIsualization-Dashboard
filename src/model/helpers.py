@@ -49,8 +49,8 @@ def generate_embeddings(spark_context, df, column_name, model_name):
         the dataframe
     column_name : string
         the name of the column you want the embeddings for
-    broadcasted_model_object_name : string
-        name of the broadcasted object
+    model_name : string
+        name of the nlp model
 
     Returns
     -------

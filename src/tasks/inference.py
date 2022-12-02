@@ -1,7 +1,7 @@
 """
 This module has a function that will perform a vector search against
 the milvus vector database and also fetch metadata corresponding to 
-the mulvus search results.
+the mulvus search results from postgres.
 
 Use this function for inference purposes.  
 """
