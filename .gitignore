@@ -3,6 +3,7 @@ __pycache__/
 build/*
 
 #ignore dataset files
-data/*
+data/raw/*
+data/artifacts/*
 output/Cosine_Sim_results.png
 output/L2_results.png
