@@ -1,6 +1,7 @@
 .DS_Store
 __pycache__/
 build/*
+search_system.egg-info/*
 
 #ignore dataset files
 data/raw/*
