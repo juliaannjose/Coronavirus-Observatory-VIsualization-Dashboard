@@ -1,5 +1,6 @@
-import streamlit as st 
-#import matplotlib.pyplot as plt
+import streamlit as st
+
+# import matplotlib.pyplot as plt
 from utils import *
 
 st.set_page_config(page_title="COVID", page_icon=":ghost:", layout="wide")
@@ -20,21 +21,22 @@ if articles:
     if query:
         txt = '<p style="font-style:italic;color:gray;">Showing top 10 related articles</p>'
         st.markdown(txt, unsafe_allow_html=True)
-        articles = get_articles(query)
+        search_param = {"query": query}  # add a parameter for "no_of_results"
+        articles = get_articles(search_param=search_param)
         for i in articles:
-            title,summary,link = i
-            st.title(title)   
+            print(i)
+            distance, title, summary, authors, link = i
+            st.title(title)
+            st.write(authors)
             st.write(summary)
-            st.markdown("[Click here to learn more](%s)" %link) 
+            st.markdown("[Click here to learn more](%s)" % link)
 
 if graphs:
     country = st.selectbox(
-        'Which country?',
-        ('Choose one','USA', 'India', 'Mexcio', 'China'))
+        "Which country?", ("Choose one", "USA", "India", "Mexcio", "China")
+    )
 
-
-    if st.button('get results'):
+    if st.button("get results"):
         st.write("You selected:" + country)
         st.pyplot(plot_rate(country))
         st.pyplot(plot_country(country))
-        

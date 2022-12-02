@@ -1,3 +1,13 @@
+"""
+This module has functions to:
+1. connect to postgres server, 
+2. create a postgres table, 
+3. insert into a postgres table, 
+4. execute sql queries to fetch 
+   metadata corresponding to milvus results
+"""
+
+
 def postgres_connect():
     """
     Connect to Postgres Server
@@ -32,9 +42,9 @@ def postgres_table_creation(table_name):
         )
         cursor.execute(create_query)
         connection.commit()
-        print("Postgres table created successfully\n")
+        print(f"Postgres table {table_name} created successfully\n")
     except Exception as e:
-        print("Postgres table creation unsuccessful\n")
+        print(f"Postgres table {table_name} creation unsuccessful\n")
         print(e)
 
 
@@ -66,7 +76,7 @@ def postgres_insert_into_table(table_name, df, corresponding_milvus_ids):
     url = list(df.select("url").toPandas()["url"])
 
     # create a temp file which we will use to copy data into postgres table
-    temp_data_path = "data/temp_metadata.csv"
+    temp_data_path = "data/artifacts/postgres_table.csv"
     with open(temp_data_path, "w") as f:
         writer = csv.writer(f)
         for i in range(0, len(corresponding_milvus_ids)):
@@ -84,7 +94,7 @@ def postgres_insert_into_table(table_name, df, corresponding_milvus_ids):
         sql = "COPY " + table_name + " FROM STDIN DELIMITER ',' CSV HEADER"
         cursor.copy_expert(sql, open(temp_data_path, "r"))
         connection.commit()
-        print("Inserted metadata into Postgress\n")
+        print(f"Inserted metadata into Postgress table {table_name}\n")
     except Exception as e:
         connection.rollback()
         print("Postgres Insertion Failed\n")
