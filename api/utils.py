@@ -1,10 +1,17 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import geopandas as gpd
+import streamlit as st
+import time
 
 from src.tasks.inference import inference
 
-
+def progressbar(n):
+    my_bar = st.progress(0)
+    for percent_complete in range(n):
+        time.sleep(0.1)
+        my_bar.progress(percent_complete + 1)
+        
 def get_articles(search_param):
     """
     This function calls the inference api
