@@ -46,7 +46,7 @@ def build(arguments, spark_context, spark_sql):
     _MILVUS_INDEX_PARAM = {
         "metric_type": "IP",  # IP for inner product and L2 for euclidean
         "index_type": "IVF_SQ8",  # Quantization-based index, IVF_SQ8 - high speed query but minor compormise in recall rate than IVF_PQ
-        "params": {"nlist": 1024},  # 4 × sqrt(n), n = entities in a segment
+        "params": {"nlist": 4096},  # 4 × sqrt(n), n = entities in a segment
     }
 
     try:

@@ -23,8 +23,8 @@ if articles:
         st.markdown(txt, unsafe_allow_html=True)
         search_param = {"query": query}  # add a parameter for "no_of_results"
         articles = get_articles(search_param=search_param)
-        progressbar(100)
-        
+        # progressbar(100)
+
         for i in articles:
             print(i)
             distance, title, summary, authors, link = i
