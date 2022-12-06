@@ -68,7 +68,6 @@ def generate_embeddings(spark_context, df, column_name, model_name):
         """
         This UDF generates embeddings for a given sentence
         """
-        # print("here")
         sentence_embeddings = bc_model.value.encode(sentence)
         return sentence_embeddings.tolist()
 
