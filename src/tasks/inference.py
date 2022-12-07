@@ -6,8 +6,8 @@ the mulvus search results from postgres.
 Use this function for inference purposes.  
 """
 
-from postgres.helpers import postgres_fetch_metadata
-from milvus.helpers import milvus_query_results
+from src.postgres.helpers import postgres_fetch_metadata
+from src.milvus.helpers import milvus_query_results
 
 
 def inference(arguments):

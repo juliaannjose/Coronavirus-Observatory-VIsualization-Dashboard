@@ -49,6 +49,7 @@ def milvus_collection_creation(collection_name, index_name, index_param):
     schema = CollectionSchema(fields=[key, field], description="embedding collection")
     # create collection
     collection = Collection(name=collection_name, schema=schema)
+    collection.release()
     # index creation
     collection.create_index(field_name=index_name, index_params=index_param)
     if utility.has_collection(collection_name) and collection.indexes:
@@ -89,11 +90,8 @@ def milvus_insert_into_db(collection_name, dense_vectors):
 
     # flattening all_ids which is a list of list into a list
     milvus_ids = [item for sublist in all_ids for item in sublist]
-    # checking if the whole df got written
-    if collection.num_entities == len(dense_vectors):
-        print(
-            f"Inserted all {len(dense_vectors)} vectors into milvus vector database\n"
-        )
+    print(f"Inserted all {len(dense_vectors)} vectors into milvus vector database\n")
+    collection.flush()
     return milvus_ids
 
 
@@ -147,5 +145,4 @@ def milvus_query_results(
         limit=k,
         expr=None,
     )[0]
-    collection.release()
     return search_results

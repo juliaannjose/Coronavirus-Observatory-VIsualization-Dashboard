@@ -13,8 +13,8 @@ from typing import Optional, Dict
 
 from src.dataset.helpers import load_dataset, preprocess_dataset
 from src.model.helpers import generate_embeddings
-from milvus.helpers import milvus_collection_creation, milvus_insert_into_db
-from postgres.helpers import postgres_table_creation, postgres_insert_into_table
+from src.milvus.helpers import milvus_collection_creation, milvus_insert_into_db
+from src.postgres.helpers import postgres_table_creation, postgres_insert_into_table
 
 
 def build(arguments, spark_context, spark_sql):
