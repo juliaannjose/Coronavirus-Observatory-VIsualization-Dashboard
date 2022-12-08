@@ -41,6 +41,8 @@ def milvus_collection_creation(collection_name, index_name, index_param):
     )
 
     milvus_connect()
+    if utility.has_collection(collection_name):
+        utility.drop_collection(collection_name)
     # define key and vector index schema
     key = FieldSchema(name="ID", dtype=DataType.INT64, is_primary=True, auto_id=True)
     field = FieldSchema(
