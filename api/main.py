@@ -44,13 +44,19 @@ if worldmap:
 ##############################################################################
 # semantic search engine
 if articles:
-    query = st.text_input("What are you looking for?")
+    query = st.text_input("Search for an article")
+    # milvus search limit - 16384
+    no_of_results = st.slider(
+        "number of search results", min_value=1, max_value=16384, value=10
+    )
     if query:
         txt = '<p style="font-style:italic;color:gray;">Showing top 10 related articles</p>'
         st.markdown(txt, unsafe_allow_html=True)
-        search_param = {"query": query}  # add a parameter for "no_of_results"
+        search_param = {
+            "query": query,
+            "no_of_results": no_of_results,
+        }
         articles = get_articles(search_param=search_param)
-        # progressbar(100)
 
         for i in articles:
             distance, title, summary, authors, link = i
