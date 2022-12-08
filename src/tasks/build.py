@@ -9,8 +9,6 @@ backend of your search system.
 
 """
 
-from typing import Optional, Dict
-
 from src.dataset.helpers import load_dataset, preprocess_dataset
 from src.model.helpers import generate_embeddings
 from src.milvus.helpers import milvus_collection_creation, milvus_insert_into_db

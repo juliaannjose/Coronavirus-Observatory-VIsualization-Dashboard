@@ -60,7 +60,7 @@ def preprocess_dataset(df):
         # create a new column that is a "title + abstract" data field
         df = df.withColumn("title_and_abstract", concat_ws(". ", df.title, df.abstract))
 
-        print("Preprocessed Dataset Successfully\n")
+        print(f"Preprocessed Dataset Successfully. Df has {df.count()} records\n")
         return df
     except Exception as e:
         print("Preprocessing of Dataset Failed\n")
