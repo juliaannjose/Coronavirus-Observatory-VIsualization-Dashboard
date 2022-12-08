@@ -3,6 +3,7 @@ This module has functions to:
 1. load a csv file into a pyspark dataframe
 2. preprocess a pyspark dataframe 
 """
+from pyspark.sql.functions import concat_ws
 
 
 def load_dataset(spark, filepath):
@@ -49,11 +50,16 @@ def preprocess_dataset(df):
         the preprocessed dataframe
     """
     try:
+        # keep only necessary columns
         cols_to_keep = ["title", "abstract", "authors", "url"]
         df = df[[cols_to_keep]]
-        # when creating embeddings based on a column, filter out null values
-        embedding_column_name = "title"
-        df = df.filter(df[embedding_column_name].isNotNull())
+
+        # we're creating embeddings based on title + abstract fields
+        # so, first filter out rows where both fields are empty
+        df = df.filter((df.title.isNotNull()) | (df.abstract.isNotNull()))
+        # create a new column that is a "title + abstract" data field
+        df = df.withColumn("title_and_abstract", concat_ws(". ", df.title, df.abstract))
+
         print("Preprocessed Dataset Successfully\n")
         return df
     except Exception as e:
