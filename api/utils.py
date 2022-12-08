@@ -5,13 +5,81 @@ import streamlit as st
 import time
 
 from src.tasks.inference import inference
+from src.analytics.worldmap import (
+    confirmed_cases,
+    death_cases,
+    recovered_cases,
+    vaccinated_cases,
+)
+
+
+def get_confirmed():
+    """
+    This function calls the analytics function confirmed_cases()
+    which returns a plotly chart which is a world map
+    showing the cumulative number of confirmed cases day-by-day.
+
+    Returns
+      -------
+      fig : plotly.graph_objs._figure.Figure
+          an interactive plotly chart
+    """
+    fig = confirmed_cases()
+    return fig
+
+
+def get_deaths():
+    """
+    This function calls the analytics function death_cases()
+    which returns a plotly chart which is a world map
+    showing the cumulative number of deaths day-by-day.
+
+    Returns
+      -------
+      fig : plotly.graph_objs._figure.Figure
+          an interactive plotly chart
+    """
+    fig = death_cases()
+    return fig
+
+
+def get_recovered():
+    """
+    This function calls the analytics function recovered_cases()
+    which returns a plotly chart which is a world map
+    showing the cumulative number of recoveries day-by-day.
+
+    Returns
+      -------
+      fig : plotly.graph_objs._figure.Figure
+          an interactive plotly chart
+    """
+    fig = recovered_cases()
+    return fig
+
+
+def get_vaccinated():
+    """
+    This function calls the analytics function vaccinated_cases()
+    which returns a plotly chart which is a world map
+    showing the cumulative number of vaccinated cases day-by-day.
+
+    Returns
+      -------
+      fig : plotly.graph_objs._figure.Figure
+          an interactive plotly chart
+    """
+    fig = vaccinated_cases()
+    return fig
+
 
 def progressbar(n):
     my_bar = st.progress(0)
     for percent_complete in range(n):
         time.sleep(0.1)
         my_bar.progress(percent_complete + 1)
-        
+
+
 def get_articles(search_param):
     """
     This function calls the inference api

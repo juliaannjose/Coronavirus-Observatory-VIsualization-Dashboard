@@ -1,21 +1,48 @@
 import streamlit as st
-
-# import matplotlib.pyplot as plt
 from utils import *
 
 st.set_page_config(page_title="COVID", page_icon=":ghost:", layout="wide")
 
-# HEader
-# st.subheader("Hi, I am Tanmay Khot")
-# st.title("A data title")
-# st.write("I am write")
-# st.write("[Learn more>](https://www.google.com)")
-
 
 with st.sidebar:
+    # defaults to worldmap which is the home page
+    worldmap = st.checkbox("World Map", value=True)
+    # checkbox - page containing other graphs
     graphs = st.checkbox("Check graphs")
+    # checkbox - semantic search engine
     articles = st.checkbox("Articles")
 
+
+##############################################################################
+# HOME PAGE
+##############################################################################
+if worldmap:
+    st.title(
+        "Covid World Map: Confirmed Cases, Deaths, Recoveries, and Vaccination Statistics"
+    )
+
+    confirmed, deaths, recovered, vaccinated = st.tabs(
+        ["Confirmed Cases", "Deaths", "Recovered", "Vaccinated"]
+    )
+
+    with confirmed:
+        with st.spinner("Loading graphs..."):
+            st.plotly_chart(get_confirmed(), use_container_width=True)
+    with deaths:
+        with st.spinner("Loading graphs..."):
+            st.plotly_chart(get_deaths(), use_container_width=True)
+    with recovered:
+        with st.spinner("Loading graphs..."):
+            st.plotly_chart(get_recovered(), use_container_width=True)
+    with vaccinated:
+        with st.spinner("Loading graphs..."):
+            st.plotly_chart(get_vaccinated(), use_container_width=True)
+
+
+##############################################################################
+# OTHER PAGES
+##############################################################################
+# semantic search engine
 if articles:
     query = st.text_input("What are you looking for?")
     if query:
@@ -26,13 +53,22 @@ if articles:
         # progressbar(100)
 
         for i in articles:
-            print(i)
             distance, title, summary, authors, link = i
             st.title(title)
-            st.write(authors)
-            st.write(summary)
-            st.markdown("[Click here to learn more](%s)" % link)
+            if not authors:
+                st.write("Author Information Not Available")
+            else:
+                st.write(authors)
+            if not summary:
+                st.write("Abstract Not Available")
+            else:
+                st.write(summary)
+            if not link:
+                st.write("URL Not Available")
+            else:
+                st.markdown("[Click here to view the paper](%s)" % link)
 
+#
 if graphs:
     country = st.selectbox(
         "Which country?", ("Choose one", "USA", "India", "Mexcio", "China")
