@@ -50,29 +50,33 @@ if articles:
         "number of search results", min_value=1, max_value=16384, value=10
     )
     if query:
-        txt = '<p style="font-style:italic;color:gray;">Showing top 10 related articles</p>'
+        txt = f'<p style="font-style:italic;color:gray;">Showing top {no_of_results} related articles</p>'
         st.markdown(txt, unsafe_allow_html=True)
         search_param = {
             "query": query,
             "no_of_results": no_of_results,
         }
-        articles = get_articles(search_param=search_param)
+        with st.spinner("Searching..."):
+            articles = get_articles(search_param=search_param)
 
-        for i in articles:
-            distance, title, summary, authors, link = i
-            st.title(title)
-            if not authors:
-                st.write("Author Information Not Available")
-            else:
-                st.write(authors)
-            if not summary:
-                st.write("Abstract Not Available")
-            else:
-                st.write(summary)
-            if not link:
-                st.write("URL Not Available")
-            else:
-                st.markdown("[Click here to view the paper](%s)" % link)
+            for i in articles:
+                title, summary, authors, link = i
+                if not title:
+                    st.write("Title Not Available")
+                else:
+                    st.title(title)
+                if not authors:
+                    st.write("Author Information Not Available")
+                else:
+                    st.write(authors)
+                if not summary:
+                    st.write("Abstract Not Available")
+                else:
+                    st.write(summary)
+                if not link:
+                    st.write("URL Not Available")
+                else:
+                    st.markdown("[View Paper](%s)" % link)
 
 #
 if graphs:
