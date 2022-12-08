@@ -1,15 +1,20 @@
 import streamlit as st 
 #import matplotlib.pyplot as plt
 from utils import *
+from spark_functions import *
+import time
 
 st.set_page_config(page_title="COVID", page_icon=":ghost:", layout="wide")
 
-# HEader
-# st.subheader("Hi, I am Tanmay Khot")
-# st.title("A data title")
-# st.write("I am write")
-# st.write("[Learn more>](https://www.google.com)")
+st.markdown("""
+<style>
+.big-font {
+    font-size:30px !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
+st.markdown('<p class="big-font">Hello World !!</p>', unsafe_allow_html=True)
 
 with st.sidebar:
     graphs = st.checkbox("Check graphs")
@@ -21,6 +26,7 @@ if articles:
         txt = '<p style="font-style:italic;color:gray;">Showing top 10 related articles</p>'
         st.markdown(txt, unsafe_allow_html=True)
         articles = get_articles(query)
+        progressbar(0.1)
         for i in articles:
             title,summary,link = i
             st.title(title)   
@@ -28,13 +34,31 @@ if articles:
             st.markdown("[Click here to learn more](%s)" %link) 
 
 if graphs:
+    df = getdata()
     country = st.selectbox(
         'Which country?',
-        ('Choose one','USA', 'India', 'Mexcio', 'China'))
+        ('Choose one','USA', 'India', 'Mexcio', 'China', 'Brazil'))
 
-
+    col1, col2, _,_,_,_ = st.columns(6)
+    months = ['0'+str(x) for x in range(1,10)]
+    months.append('11')
+    months.append('12')
+    years = ['2020','2021','2022']
+    with col1:
+        startMonth = st.selectbox('Start month',(months))
+        endMonth = st.selectbox('End month',(months))
+    with col2:
+        startYear = st.selectbox('Start year',(years))
+        endYear = st.selectbox('End year',(years))
+    
     if st.button('get results'):
-        st.write("You selected:" + country)
-        st.pyplot(plot_rate(country))
-        st.pyplot(plot_country(country))
+        total, result = getstats(df, startMonth, startYear, endMonth, endYear, country)
+        
+        st.write("Total deaths in this time period:",total)
+        progressbar(0.6)
+        plots = plot_rate(result)
+        
+        st.pyplot(plots)
+        
+        #st.pyplot(plot_country(country))
         

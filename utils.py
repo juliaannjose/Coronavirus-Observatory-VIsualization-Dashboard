@@ -1,6 +1,15 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import geopandas as gpd
+import streamlit as st
+import time
+def progressbar(n):
+    my_bar = st.progress(0)
+    for percent_complete in range(100):
+        time.sleep(n)
+        my_bar.progress(percent_complete + 1)
+        
+    
 
 def get_articles(query):
     result = [
@@ -67,35 +76,57 @@ def get_articles(query):
     ]
     return result
 
-def plot_rate(country):
+def plot_rate(result):
 
     # fetch country data
 
     Y = [43,32,67,12,86,23,31,50]
     X = [1,2,3,4,5,6,7,8]
 
-    arr = np.random.normal(35, 35, size=35)
+    arr = np.random.normal(100, 25, size=20)
     #fig, ax = plt.subplots()
-    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
-    plt.tight_layout()
-    ax1.set_title('Confirmation rate')
-    ax2.set_title('Death rate')
-    ax3.set_title('Recovery rate')
-    ax4.set_title('Vaccination rate')
-    ax1.plot(X,Y)
-    ax2.plot(X,Y)
-    ax3.plot(X,Y)
-    ax4.plot(X,Y)
-    return fig
+    #fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
 
-def plot_country(country):
-        world = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
-        
-        world_fig, ax = plt.subplots(figsize=(12, 6))
-        world.plot(color="lightgrey", ax=ax)
-        
-        # or plot Africa continent
-        result, ax2 = plt.subplots(figsize=(12, 6))
-        ax2 = world[world.name == country].plot(figsize=(8,8), edgecolor=u'gray', cmap='Pastel1', ax = ax2)
-        
-        return result
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, sharex=True, figsize=(15, 15))
+
+
+    ax1.tick_params(labelbottom=True, labelsize=15)
+
+    plt.tight_layout(pad = 5)
+
+    plt.subplot(411)
+    ax1.plot(X, Y)
+    ax1.set_title('Number of Confirmed cases', color='red')
+    ax1.set_ylabel('No. of Cases', fontsize = 15)
+    ax1.set_xlabel('Time period', fontsize = 10)
+    ax1.tick_params(labelbottom=True, labelsize=11)
+    ax1.grid()
+
+    plt.subplot(412)
+    ax2.plot(X,Y)
+    ax2.set_title('Number of Deaths', color='red')
+    ax2.set_ylabel('No. of Deaths', fontsize = 15)
+    ax2.set_xlabel('Time period', fontsize = 10)
+    ax2.tick_params(labelbottom=True, labelsize=12)
+
+    ax2.grid()
+
+    plt.subplot(413)
+    ax3.plot(X,Y)
+    ax3.set_title('Number of Recovered', color='red')
+    ax3.set_ylabel('No. of Recovered', fontsize = 15)
+    ax3.set_xlabel('Time period', fontsize = 10)
+    ax3.tick_params(labelbottom=True, labelsize=13)
+
+    ax3.grid()
+
+    plt.subplot(414)
+    ax4.plot(X,Y)
+    ax4.set_title('Number of Vaccinated', color='red')
+    ax4.set_ylabel('No. of Vaccinated', fontsize = 15)
+    ax4.set_xlabel('Time Period', fontsize = 10)
+    ax4.tick_params(labelbottom=True, labelsize=14)
+    ax4.grid()
+
+    #fig.show()
+    return fig
