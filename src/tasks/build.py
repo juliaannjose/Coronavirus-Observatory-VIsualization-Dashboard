@@ -56,7 +56,7 @@ def build(arguments, spark_context, spark_sql):
         dense_vectors = generate_embeddings(
             spark_context=spark_context,
             df=df,
-            column_name="title",
+            column_name="title_and_abstract",
             model_name=_NLP_MODEL_NAME,
         )
 
