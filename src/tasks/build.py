@@ -9,12 +9,10 @@ backend of your search system.
 
 """
 
-from typing import Optional, Dict
-
 from src.dataset.helpers import load_dataset, preprocess_dataset
 from src.model.helpers import generate_embeddings
-from milvus.helpers import milvus_collection_creation, milvus_insert_into_db
-from postgres.helpers import postgres_table_creation, postgres_insert_into_table
+from src.milvus.helpers import milvus_collection_creation, milvus_insert_into_db
+from src.postgres.helpers import postgres_table_creation, postgres_insert_into_table
 
 
 def build(arguments, spark_context, spark_sql):
@@ -46,7 +44,7 @@ def build(arguments, spark_context, spark_sql):
     _MILVUS_INDEX_PARAM = {
         "metric_type": "IP",  # IP for inner product and L2 for euclidean
         "index_type": "IVF_SQ8",  # Quantization-based index, IVF_SQ8 - high speed query but minor compormise in recall rate than IVF_PQ
-        "params": {"nlist": 1024},  # 4 × sqrt(n), n = entities in a segment
+        "params": {"nlist": 4096},  # 4 × sqrt(n), n = entities in a segment
     }
 
     try:
@@ -56,7 +54,7 @@ def build(arguments, spark_context, spark_sql):
         dense_vectors = generate_embeddings(
             spark_context=spark_context,
             df=df,
-            column_name="title",
+            column_name="title_and_abstract",
             model_name=_NLP_MODEL_NAME,
         )
 

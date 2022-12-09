@@ -6,8 +6,8 @@ the mulvus search results from postgres.
 Use this function for inference purposes.  
 """
 
-from postgres.helpers import postgres_fetch_metadata
-from milvus.helpers import milvus_query_results
+from src.postgres.helpers import postgres_fetch_metadata
+from src.milvus.helpers import milvus_query_results
 
 
 def inference(arguments):
@@ -31,7 +31,7 @@ def inference(arguments):
     # variables
     _MILVUS_COLLECTION_NAME = _POSTGRES_TABLE_NAME = "covid_search"
     _MILVUS_INDEX_NAME = "Embedding"
-    _MILVUS_SEARCH_PARAM = {"metric_type": "IP", "params": {"nprobe": 32}}
+    _MILVUS_SEARCH_PARAM = {"metric_type": "IP", "params": {"nprobe": 128}}
     _NLP_MODEL_NAME = (
         arguments["model_name"]
         if "model_name" in arguments

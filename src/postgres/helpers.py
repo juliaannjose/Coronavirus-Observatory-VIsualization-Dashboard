@@ -128,18 +128,15 @@ def postgres_fetch_metadata(milvus_results, table_name):
     connection, cursor = postgres_connect()
     # list of lists containing cosine similarity distance, title, abstract, authors, url for each result row
     postgres_result = []
-    for result in milvus_results:
-        fetch_query = (
-            "select title, abstract, authors, url from "
-            + table_name
-            + " where ids = "
-            + str(result.id)
-            + ";"
-        )
-        cursor.execute(fetch_query)
-        rows = cursor.fetchall()
+    milvus_result_ids = [result.id for result in milvus_results]
+    fetch_query = (
+        "select title, abstract, authors, url from "
+        + table_name
+        + " where ids = ANY (%s);"
+    )
+    cursor.execute(fetch_query, (milvus_result_ids,))
+    all_rows = cursor.fetchall()
+    for rows in all_rows:
         if len(rows):
-            postgres_result.append(
-                [result.distance, rows[0][0], rows[0][1], rows[0][2], rows[0][3]]
-            )
+            postgres_result.append([rows[0], rows[1], rows[2], rows[3]])
     return postgres_result
