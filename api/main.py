@@ -80,11 +80,30 @@ if articles:
 
 #
 if graphs:
+    df = get_data()
     country = st.selectbox(
-        "Which country?", ("Choose one", "USA", "India", "Mexcio", "China")
+        "Which country?", ("Choose one", "USA", "India", "Mexcio", "China", "Brazil")
     )
 
+    col1, col2, _, _, _, _ = st.columns(6)
+    months = ["0" + str(x) for x in range(1, 10)]
+    months.append("11")
+    months.append("12")
+    years = ["2020", "2021", "2022"]
+    with col1:
+        startMonth = st.selectbox("Start month", (months))
+        endMonth = st.selectbox("End month", (months))
+    with col2:
+        startYear = st.selectbox("Start year", (years))
+        endYear = st.selectbox("End year", (years))
+
     if st.button("get results"):
-        st.write("You selected:" + country)
-        st.pyplot(plot_rate(country))
-        st.pyplot(plot_country(country))
+        total, result = getstats(df, startMonth, startYear, endMonth, endYear, country)
+
+        st.write("Total deaths in this time period:", total)
+        progressbar(0.6)
+        plots = get_plot_rate(result)
+
+        st.pyplot(plots)
+
+        # st.pyplot(plot_country(country))
