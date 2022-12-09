@@ -5,18 +5,16 @@ st.set_page_config(page_title="COVID", page_icon=":ghost:", layout="wide")
 
 
 with st.sidebar:
-    # defaults to worldmap which is the home page
-    worldmap = st.checkbox("World Map", value=True)
-    # checkbox - page containing other graphs
-    graphs = st.checkbox("Check graphs")
-    # checkbox - semantic search engine
-    articles = st.checkbox("Articles")
+    utility = st.radio(
+        "What would you like to do?",
+        ("Interactive Map", "World Statistics", "Search Engine"),
+    )
 
 
 ##############################################################################
 # HOME PAGE
 ##############################################################################
-if worldmap:
+if utility == "Interactive Map":
 
     st.title(
         "Covid World Map: Confirmed Cases, Deaths, Recoveries, and Vaccination Statistics"
@@ -44,7 +42,7 @@ if worldmap:
 # OTHER PAGES
 ##############################################################################
 # semantic search engine
-if articles:
+if utility == "Search Engine":
 
     query = st.text_input("Search for an article")
     # milvus search limit - 16384
@@ -81,7 +79,7 @@ if articles:
                     st.markdown("[View Paper](%s)" % link)
 
 # graphs on confirmed cases, deaths, recovery and vaccination rates
-if graphs:
+if utility == "World Statistics":
 
     df = get_data()
     country = st.selectbox(
