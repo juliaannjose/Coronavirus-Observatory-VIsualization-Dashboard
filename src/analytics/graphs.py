@@ -17,7 +17,7 @@ spark = pyspark.SQLContext.getOrCreate(sc)
 
 
 def getdata():
-    df = spark.read.format("csv").option("header", "true").load("./country.csv")
+    df = spark.read.format("csv").option("header", "true").load("./data/raw/country.csv")
 
     df = df.withColumn("date", df.date.cast("timestamp")).orderBy("date")
     df = df.withColumn("month", month(df.date))
