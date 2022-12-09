@@ -78,7 +78,7 @@ if articles:
                 else:
                     st.markdown("[View Paper](%s)" % link)
 
-#
+# graphs on confirmed cases, deaths, recovery and vaccination rates
 if graphs:
     df = get_data()
     country = st.selectbox(

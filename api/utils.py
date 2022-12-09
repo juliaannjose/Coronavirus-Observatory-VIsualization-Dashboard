@@ -4,9 +4,6 @@ import geopandas as gpd
 import streamlit as st
 import time
 
-from src.analytics.graphs import getdata, getstats, plot_rate
-
-
 from src.tasks.inference import inference
 from src.analytics.worldmap import (
     confirmed_cases,
