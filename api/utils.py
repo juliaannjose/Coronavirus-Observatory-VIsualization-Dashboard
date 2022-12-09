@@ -11,6 +11,7 @@ from src.analytics.worldmap import (
     recovered_cases,
     vaccinated_cases,
 )
+from src.analytics.graphs import getdata, getstats, plot_rate
 
 
 def get_confirmed():
@@ -75,8 +76,8 @@ def get_vaccinated():
 
 def progressbar(n):
     my_bar = st.progress(0)
-    for percent_complete in range(n):
-        time.sleep(0.1)
+    for percent_complete in range(100):
+        time.sleep(n)
         my_bar.progress(percent_complete + 1)
 
 
@@ -101,38 +102,13 @@ def get_articles(search_param):
     return results
 
 
-def plot_rate(country):
-
-    # fetch country data
-
-    Y = [43, 32, 67, 12, 86, 23, 31, 50]
-    X = [1, 2, 3, 4, 5, 6, 7, 8]
-
-    arr = np.random.normal(35, 35, size=35)
-    # fig, ax = plt.subplots()
-    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
-    plt.tight_layout()
-    ax1.set_title("Confirmation rate")
-    ax2.set_title("Death rate")
-    ax3.set_title("Recovery rate")
-    ax4.set_title("Vaccination rate")
-    ax1.plot(X, Y)
-    ax2.plot(X, Y)
-    ax3.plot(X, Y)
-    ax4.plot(X, Y)
-    return fig
+def get_data():
+    return getdata()
 
 
-def plot_country(country):
-    world = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
+def get_stats(df, sm, sy, em, ey, country):
+    return getstats(df, sm, sy, em, ey, country)
 
-    world_fig, ax = plt.subplots(figsize=(12, 6))
-    world.plot(color="lightgrey", ax=ax)
 
-    # or plot Africa continent
-    result, ax2 = plt.subplots(figsize=(12, 6))
-    ax2 = world[world.name == country].plot(
-        figsize=(8, 8), edgecolor="gray", cmap="Pastel1", ax=ax2
-    )
-
-    return result
+def get_plot_rate(result):
+    return plot_rate(result)
