@@ -1,5 +1,5 @@
 import streamlit as st
-
+from utils import *
 
 st.set_page_config(page_title="COVID", page_icon=":ghost:", layout="wide")
 
@@ -17,7 +17,6 @@ with st.sidebar:
 # HOME PAGE
 ##############################################################################
 if worldmap:
-    from utils import get_confirmed, get_deaths, get_vaccinated, get_recovered
 
     st.title(
         "Covid World Map: Confirmed Cases, Deaths, Recoveries, and Vaccination Statistics"
@@ -46,7 +45,6 @@ if worldmap:
 ##############################################################################
 # semantic search engine
 if articles:
-    from utils import get_articles
 
     query = st.text_input("Search for an article")
     # milvus search limit - 16384
@@ -84,11 +82,11 @@ if articles:
 
 # graphs on confirmed cases, deaths, recovery and vaccination rates
 if graphs:
-    from utils import get_data, get_plot_rate, get_stats, progressbar
 
     df = get_data()
     country = st.selectbox(
-        "Which country?", ("Choose one", "USA", "India", "Mexcio", "China", "Brazil")
+        "Which country?",
+        ("Choose one", "USA", "India", "Mexcio", "China", "Brazil"),
     )
 
     col1, col2, _, _, _, _ = st.columns(6)
