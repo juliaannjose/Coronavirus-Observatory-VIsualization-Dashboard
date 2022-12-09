@@ -24,7 +24,7 @@ def confirmed_cases():
           an interactive plotly choropleth map
     """
     # hardcoding path to dataset for now
-    PATH_TO_DATA = "/Users/juliaannjose/Documents/GitHub/Coronavirus-Observatory-VIsualization-Dashboard/data/raw"
+    PATH_TO_DATA = "./data/raw"
     worldmap_df = spark.read.csv(
         PATH_TO_DATA + "/country.csv", header=True, inferSchema=True
     )
@@ -65,7 +65,7 @@ def death_cases():
           an interactive plotly choropleth map
     """
     # hardcoding path to dataset for now
-    PATH_TO_DATA = "/Users/juliaannjose/Documents/GitHub/Coronavirus-Observatory-VIsualization-Dashboard/data/raw"
+    PATH_TO_DATA = "./data/raw"
     worldmap_df = spark.read.csv(
         PATH_TO_DATA + "/country.csv", header=True, inferSchema=True
     )
@@ -106,7 +106,7 @@ def recovered_cases():
           an interactive plotly choropleth map
     """
     # hardcoding path to dataset for now
-    PATH_TO_DATA = "/Users/juliaannjose/Documents/GitHub/Coronavirus-Observatory-VIsualization-Dashboard/data/raw"
+    PATH_TO_DATA = "./data/raw"
     worldmap_df = spark.read.csv(
         PATH_TO_DATA + "/country.csv", header=True, inferSchema=True
     )
@@ -147,7 +147,7 @@ def vaccinated_cases():
           an interactive plotly choropleth map
     """
     # hardcoding path to dataset for now
-    PATH_TO_DATA = "/Users/juliaannjose/Documents/GitHub/Coronavirus-Observatory-VIsualization-Dashboard/data/raw"
+    PATH_TO_DATA = "./data/raw"
     worldmap_df = spark.read.csv(
         PATH_TO_DATA + "/country.csv", header=True, inferSchema=True
     )
