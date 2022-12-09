@@ -1,5 +1,5 @@
 import streamlit as st
-from utils import *
+
 
 st.set_page_config(page_title="COVID", page_icon=":ghost:", layout="wide")
 
@@ -17,6 +17,8 @@ with st.sidebar:
 # HOME PAGE
 ##############################################################################
 if worldmap:
+    from utils import get_confirmed, get_deaths, get_vaccinated, get_recovered
+
     st.title(
         "Covid World Map: Confirmed Cases, Deaths, Recoveries, and Vaccination Statistics"
     )
@@ -44,6 +46,8 @@ if worldmap:
 ##############################################################################
 # semantic search engine
 if articles:
+    from utils import get_articles
+
     query = st.text_input("Search for an article")
     # milvus search limit - 16384
     no_of_results = st.slider(
@@ -80,6 +84,8 @@ if articles:
 
 # graphs on confirmed cases, deaths, recovery and vaccination rates
 if graphs:
+    from utils import get_data, get_plot_rate, get_stats, progressbar
+
     df = get_data()
     country = st.selectbox(
         "Which country?", ("Choose one", "USA", "India", "Mexcio", "China", "Brazil")
@@ -98,7 +104,7 @@ if graphs:
         endYear = st.selectbox("End year", (years))
 
     if st.button("get results"):
-        total, result = getstats(df, startMonth, startYear, endMonth, endYear, country)
+        total, result = get_stats(df, startMonth, startYear, endMonth, endYear, country)
 
         st.write("Total deaths in this time period:", total)
         progressbar(0.6)

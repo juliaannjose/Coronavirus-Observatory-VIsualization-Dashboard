@@ -6,13 +6,13 @@ from pyspark.sql.functions import col, lag, monotonically_increasing_id
 from pyspark.sql.window import Window
 
 
-conf = pyspark.SparkConf().setAppName("bd_project")
-conf.set("spark.driver.memory", "8g")
-conf.set("spark.worker.timeout", "10000000")
-conf.set("spark.driver.maxResultSize", "0")
-conf.set("spark.executor.memory", "8g")
+# conf = pyspark.SparkConf().setAppName("inference")
+# conf.set("spark.driver.memory", "8g")
+# conf.set("spark.worker.timeout", "10000000")
+# conf.set("spark.driver.maxResultSize", "0")
+# conf.set("spark.executor.memory", "8g")
 
-sc = pyspark.SparkContext(conf=conf)
+sc = pyspark.SparkContext.getOrCreate()  # get existing spark context
 spark = pyspark.SQLContext.getOrCreate(sc)
 
 
