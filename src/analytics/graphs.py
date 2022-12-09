@@ -6,7 +6,7 @@ from pyspark.sql.functions import col, lag, monotonically_increasing_id
 from pyspark.sql.window import Window
 
 
-conf = pyspark.SparkConf()
+conf = pyspark.SparkConf().setAppName("bd_project")
 conf.set("spark.driver.memory", "8g")
 conf.set("spark.worker.timeout", "10000000")
 conf.set("spark.driver.maxResultSize", "0")
@@ -17,7 +17,9 @@ spark = pyspark.SQLContext.getOrCreate(sc)
 
 
 def getdata():
-    df = spark.read.format("csv").option("header", "true").load("./data/raw/country.csv")
+    df = (
+        spark.read.format("csv").option("header", "true").load("./data/raw/country.csv")
+    )
 
     df = df.withColumn("date", df.date.cast("timestamp")).orderBy("date")
     df = df.withColumn("month", month(df.date))

@@ -1,7 +1,7 @@
 import pyspark
 import plotly.express as px
 
-conf = pyspark.SparkConf()
+conf = pyspark.SparkConf().setAppName("bd_project")
 conf.set("spark.driver.memory", "8g")
 conf.set("spark.worker.timeout", "10000000")
 conf.set("spark.driver.maxResultSize", "0")
