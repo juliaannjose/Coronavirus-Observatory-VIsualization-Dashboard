@@ -31,7 +31,7 @@ def world_statistics():
     df = get_data()
     country = st.selectbox(
         "Which country?",
-        ("Choose one", "USA", "India", "Mexcio", "China", "Brazil"),
+        list_of_countries(),
     )
 
     col1, col2, _, _, _, _ = st.columns(6)
@@ -54,6 +54,80 @@ def world_statistics():
         plots = get_plot_rate(result)
 
         st.pyplot(plots)
+
+
+def covid_policies():
+    df = get_data()
+    country = st.selectbox(
+        "Which country?",
+        list_of_countries(),
+    )
+
+    col1, col2, _, _, _, _ = st.columns(6)
+    months = ["0" + str(x) for x in range(1, 10)]
+    months.append("11")
+    months.append("12")
+    years = ["2020", "2021", "2022"]
+    with col1:
+        startMonth = st.selectbox("Start month", (months))
+        endMonth = st.selectbox("End month", (months))
+    with col2:
+        startYear = st.selectbox("Start year", (years))
+        endYear = st.selectbox("End year", (years))
+
+    if st.button("get policies - min cases"):
+        policy = get_min_policy(df, startMonth, startYear, endMonth, endYear, country)
+
+        st.write(
+            "policies in this time period which lead to minimum cases are as follows:",
+            policy,
+        )
+
+    if st.button("get policies - max cases"):
+        policy = get_max_policy(df, startMonth, startYear, endMonth, endYear, country)
+
+        st.write(
+            "policies in this time period which lead to maximum cases are as follows:",
+            policy,
+        )
+
+    (
+        school_closing_policy,
+        workplace_closing,
+        cancel_events,
+        gatherings_restrictions,
+        transport_closing,
+        stay_home_restrictions,
+        internal_movement_restrictions,
+        international_movement_restrictions,
+        information_campaigns,
+        testing_policy,
+        contact_tracing,
+        facial_coverings,
+        vaccination_policy,
+        elderly_people_protection,
+    ) = get_policy_descriptions()
+
+    st.write("School closing policy description", school_closing_policy)
+    st.write("workplace closing  policy description", workplace_closing)
+    st.write("cancelled events policy description", cancel_events)
+    st.write(" gatherings restrictions policy description", gatherings_restrictions)
+    st.write("transport closing policy description", transport_closing)
+    st.write("stay home restrictions policy description", stay_home_restrictions)
+    st.write(
+        "internal movement restrictionspolicy description",
+        internal_movement_restrictions,
+    )
+    st.write(
+        "international movement restrictions policy description",
+        international_movement_restrictions,
+    )
+    st.write(" information campaigns policy description", information_campaigns)
+    st.write("testing policy description", testing_policy)
+    st.write("contact tracing policy description", contact_tracing)
+    st.write("facial coverings policy description", facial_coverings)
+    st.write("vaccination policy description", vaccination_policy)
+    st.write("elderly people protection description", elderly_people_protection)
 
 
 def search_engine():
@@ -94,6 +168,7 @@ def search_engine():
 
 page_names_to_funcs = {
     "Interactive Map": interactive_map,
+    "Policy Measures": covid_policies,
     "World Statistics": world_statistics,
     "Search Engine": search_engine,
 }
