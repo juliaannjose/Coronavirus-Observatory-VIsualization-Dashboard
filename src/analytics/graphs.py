@@ -2,15 +2,9 @@ import pyspark
 import matplotlib.pyplot as plt
 from pyspark.sql.functions import year, month, dayofmonth
 from pyspark.sql.types import IntegerType
-from pyspark.sql.functions import col, lag, monotonically_increasing_id
+import pyspark.sql.functions as f
 from pyspark.sql.window import Window
 
-
-# conf = pyspark.SparkConf().setAppName("inference")
-# conf.set("spark.driver.memory", "8g")
-# conf.set("spark.worker.timeout", "10000000")
-# conf.set("spark.driver.maxResultSize", "0")
-# conf.set("spark.executor.memory", "8g")
 
 sc = pyspark.SparkContext.getOrCreate()  # get existing spark context
 spark = pyspark.SQLContext.getOrCreate(sc)
@@ -38,10 +32,10 @@ def getstats(df, sm, sy, em, ey, country):
     else:
         enddate = ey + "-" + em + "-30"
 
-    subset = df.filter((col("date") >= startdate) & (col("date") <= enddate))
-    subset = subset.filter(col("administrative_area_level_1") == country)
+    subset = df.filter((f.col("date") >= startdate) & (f.col("date") <= enddate))
+    subset = subset.filter(f.col("administrative_area_level_1") == country)
 
-    subset = subset.withColumn("ID", monotonically_increasing_id())
+    subset = subset.withColumn("ID", f.monotonically_increasing_id())
     windowSpec = Window.orderBy("ID")
 
     subset = subset.withColumn("deaths", subset["deaths"].cast(IntegerType()))
@@ -52,10 +46,12 @@ def getstats(df, sm, sy, em, ey, country):
     subset = subset.withColumn("recovered", subset["recovered"].cast(IntegerType()))
 
     # There's only one partition - alternatives to lead
-    subset = subset.withColumn("prev_deaths", lag("deaths", 1).over(windowSpec))
-    subset = subset.withColumn("prev_confirmed", lag("confirmed", 1).over(windowSpec))
-    subset = subset.withColumn("prev_vac", lag("people_vaccinated", 1).over(windowSpec))
-    subset = subset.withColumn("prev_recovered", lag("recovered", 1).over(windowSpec))
+    subset = subset.withColumn("prev_deaths", f.lag("deaths", 1).over(windowSpec))
+    subset = subset.withColumn("prev_confirmed", f.lag("confirmed", 1).over(windowSpec))
+    subset = subset.withColumn(
+        "prev_vac", f.lag("people_vaccinated", 1).over(windowSpec)
+    )
+    subset = subset.withColumn("prev_recovered", f.lag("recovered", 1).over(windowSpec))
 
     subset = subset.withColumn("daily_deaths", subset["deaths"] - subset["prev_deaths"])
     subset = subset.withColumn(
@@ -68,7 +64,7 @@ def getstats(df, sm, sy, em, ey, country):
         "daily_recovered", subset["recovered"] - subset["prev_recovered"]
     )
 
-    subset = subset.withColumn("ID", monotonically_increasing_id())
+    subset = subset.withColumn("ID", f.monotonically_increasing_id())
     result = subset.select(
         "year",
         "month",
@@ -82,7 +78,9 @@ def getstats(df, sm, sy, em, ey, country):
         "ID",
     )
 
-    totalDeaths = subset.filter(col("date") == enddate).select("deaths").collect()[0][0]
+    totalDeaths = (
+        subset.filter(f.col("date") == enddate).select("deaths").collect()[0][0]
+    )
     return totalDeaths, result
 
 
@@ -145,5 +143,214 @@ def plot_rate(result):
     ax4.tick_params(labelbottom=True, labelsize=14)
     ax4.grid()
 
-    # fig.show()
     return fig
+
+
+def min_policy(df, sm, sy, em, ey, country):
+
+    startdate = sy + "-" + sm + "-01"
+    if em == "02":
+        enddate = ey + "-" + em + "-28"
+    elif em in ["01", "03", "05", "07", "08", "10", "12"]:
+        enddate = ey + "-" + em + "-31"
+    else:
+        enddate = ey + "-" + em + "-30"
+
+    subset = df.filter((f.col("date") >= startdate) & (f.col("date") <= enddate))
+    subset = subset.filter(f.col("administrative_area_level_1") == country)
+
+    subset = subset.withColumn("ID", f.monotonically_increasing_id())
+    windowSpec = Window.orderBy("ID")
+
+    subset = subset.withColumn("deaths", subset["deaths"].cast(IntegerType()))
+    subset = subset.withColumn("confirmed", subset["confirmed"].cast(IntegerType()))
+    subset = subset.withColumn(
+        "people_vaccinated", subset["people_vaccinated"].cast(IntegerType())
+    )
+    subset = subset.withColumn("recovered", subset["recovered"].cast(IntegerType()))
+
+    # There's only one partition - alternatives to lead
+
+    subset = subset.withColumn("prev_deaths", f.lag("deaths", 1).over(windowSpec))
+    subset = subset.withColumn("prev_confirmed", f.lag("confirmed", 1).over(windowSpec))
+    subset = subset.withColumn(
+        "prev_vac", f.lag("people_vaccinated", 1).over(windowSpec)
+    )
+    subset = subset.withColumn("prev_recovered", f.lag("recovered", 1).over(windowSpec))
+
+    subset = subset.withColumn("daily_deaths", subset["deaths"] - subset["prev_deaths"])
+    subset = subset.withColumn(
+        "daily_confirmed", subset["confirmed"] - subset["prev_confirmed"]
+    )
+    subset = subset.withColumn(
+        "daily_vacs", subset["people_vaccinated"] - subset["prev_vac"]
+    )
+    subset = subset.withColumn(
+        "daily_recovered", subset["recovered"] - subset["prev_recovered"]
+    )
+
+    subset = subset.withColumn("ID", f.monotonically_increasing_id())
+
+    subset = subset.withColumn(
+        "daily_confirmed", subset["confirmed"] - subset["prev_confirmed"]
+    )
+    # result = subset.select("year", "month", "day", "deaths", "prev_deaths", "daily_deaths", "daily_confirmed","daily_vacs",'daily_recovered','ID')
+    policy = subset.select(
+        "month",
+        "day",
+        "year",
+        "school_closing",
+        "workplace_closing",
+        "cancel_events",
+        "gatherings_restrictions",
+        "transport_closing",
+        "stay_home_restrictions",
+        "internal_movement_restrictions",
+        "international_movement_restrictions",
+        "information_campaigns",
+        "testing_policy",
+        "contact_tracing",
+        "facial_coverings",
+        "vaccination_policy",
+        "elderly_people_protection",
+        "daily_confirmed",
+    )
+
+    policy = policy.withColumn("school_closing", f.abs("school_closing"))
+    policy = policy.withColumn("workplace_closing", f.abs("workplace_closing"))
+    policy = policy.withColumn("cancel_events", f.abs("cancel_events"))
+    policy = policy.withColumn(
+        "gatherings_restrictions", f.abs("gatherings_restrictions")
+    )
+    policy = policy.withColumn("transport_closing", f.abs("transport_closing"))
+    policy = policy.withColumn(
+        "stay_home_restrictions", f.abs("stay_home_restrictions")
+    )
+    policy = policy.withColumn(
+        "internal_movement_restrictions", f.abs("internal_movement_restrictions")
+    )
+    policy = policy.withColumn(
+        "international_movement_restrictions",
+        f.abs("international_movement_restrictions"),
+    )
+    policy = policy.withColumn("information_campaigns", f.abs("information_campaigns"))
+    policy = policy.withColumn("testing_policy", f.abs("testing_policy"))
+    policy = policy.withColumn("contact_tracing", f.abs("contact_tracing"))
+    policy = policy.withColumn("facial_coverings", f.abs("facial_coverings"))
+    policy = policy.withColumn("vaccination_policy", f.abs("vaccination_policy"))
+    policy = policy.withColumn(
+        "elderly_people_protection", f.abs("elderly_people_protection")
+    )
+    policy = policy.withColumn("daily_confirmed", f.abs("daily_confirmed"))
+
+    policy.createOrReplaceTempView("policy")
+    policy = spark.sql(
+        "SELECT * from policy WHERE daily_confirmed = (SELECT MIN(daily_confirmed) FROM policy);"
+    )
+
+    return policy
+
+
+def max_policy(df, sm, sy, em, ey, country):
+
+    startdate = sy + "-" + sm + "-01"
+    if em == "02":
+        enddate = ey + "-" + em + "-28"
+    elif em in ["01", "03", "05", "07", "08", "10", "12"]:
+        enddate = ey + "-" + em + "-31"
+    else:
+        enddate = ey + "-" + em + "-30"
+
+    subset = df.filter((f.col("date") >= startdate) & (f.col("date") <= enddate))
+    subset = subset.filter(f.col("administrative_area_level_1") == country)
+
+    subset = subset.withColumn("ID", f.monotonically_increasing_id())
+    windowSpec = Window.orderBy("ID")
+
+    subset = subset.withColumn("deaths", subset["deaths"].cast(IntegerType()))
+    subset = subset.withColumn("confirmed", subset["confirmed"].cast(IntegerType()))
+    subset = subset.withColumn(
+        "people_vaccinated", subset["people_vaccinated"].cast(IntegerType())
+    )
+    subset = subset.withColumn("recovered", subset["recovered"].cast(IntegerType()))
+
+    # There's only one partition - alternatives to lead
+
+    subset = subset.withColumn("prev_deaths", f.lag("deaths", 1).over(windowSpec))
+    subset = subset.withColumn("prev_confirmed", f.lag("confirmed", 1).over(windowSpec))
+    subset = subset.withColumn(
+        "prev_vac", f.lag("people_vaccinated", 1).over(windowSpec)
+    )
+    subset = subset.withColumn("prev_recovered", f.lag("recovered", 1).over(windowSpec))
+
+    subset = subset.withColumn("daily_deaths", subset["deaths"] - subset["prev_deaths"])
+    subset = subset.withColumn(
+        "daily_confirmed", subset["confirmed"] - subset["prev_confirmed"]
+    )
+    subset = subset.withColumn(
+        "daily_vacs", subset["people_vaccinated"] - subset["prev_vac"]
+    )
+    subset = subset.withColumn(
+        "daily_recovered", subset["recovered"] - subset["prev_recovered"]
+    )
+
+    subset = subset.withColumn("ID", f.monotonically_increasing_id())
+
+    subset = subset.withColumn(
+        "daily_confirmed", subset["confirmed"] - subset["prev_confirmed"]
+    )
+    # result = subset.select("year", "month", "day", "deaths", "prev_deaths", "daily_deaths", "daily_confirmed","daily_vacs",'daily_recovered','ID')
+    policy = subset.select(
+        "month",
+        "day",
+        "year",
+        "school_closing",
+        "workplace_closing",
+        "cancel_events",
+        "gatherings_restrictions",
+        "transport_closing",
+        "stay_home_restrictions",
+        "internal_movement_restrictions",
+        "international_movement_restrictions",
+        "information_campaigns",
+        "testing_policy",
+        "contact_tracing",
+        "facial_coverings",
+        "vaccination_policy",
+        "elderly_people_protection",
+        "daily_confirmed",
+    )
+
+    policy = policy.withColumn("school_closing", f.abs("school_closing"))
+    policy = policy.withColumn("workplace_closing", f.abs("workplace_closing"))
+    policy = policy.withColumn("cancel_events", f.abs("cancel_events"))
+    policy = policy.withColumn(
+        "gatherings_restrictions", f.abs("gatherings_restrictions")
+    )
+    policy = policy.withColumn("transport_closing", f.abs("transport_closing"))
+    policy = policy.withColumn(
+        "stay_home_restrictions", f.abs("stay_home_restrictions")
+    )
+    policy = policy.withColumn(
+        "internal_movement_restrictions", f.abs("internal_movement_restrictions")
+    )
+    policy = policy.withColumn(
+        "international_movement_restrictions",
+        f.abs("international_movement_restrictions"),
+    )
+    policy = policy.withColumn("information_campaigns", f.abs("information_campaigns"))
+    policy = policy.withColumn("testing_policy", f.abs("testing_policy"))
+    policy = policy.withColumn("contact_tracing", f.abs("contact_tracing"))
+    policy = policy.withColumn("facial_coverings", f.abs("facial_coverings"))
+    policy = policy.withColumn("vaccination_policy", f.abs("vaccination_policy"))
+    policy = policy.withColumn(
+        "elderly_people_protection", f.abs("elderly_people_protection")
+    )
+    policy = policy.withColumn("daily_confirmed", f.abs("daily_confirmed"))
+
+    policy.createOrReplaceTempView("policy")
+    policy = spark.sql(
+        "SELECT * from policy WHERE daily_confirmed = (SELECT MAX(daily_confirmed) FROM policy);"
+    )
+
+    return policy
