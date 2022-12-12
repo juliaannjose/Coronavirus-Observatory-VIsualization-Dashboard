@@ -165,8 +165,16 @@ def search_engine():
                 else:
                     st.markdown("[View Paper](%s)" % link)
 
+def home_page_insights():
+    subset1=get_home_page()
+    st.write(
+            "Here are the first insights:",
+            subset1,
+        )
+
 
 page_names_to_funcs = {
+    "General Insights": home_page_insights,
     "Interactive Map": interactive_map,
     "Policy Measures": covid_policies,
     "World Statistics": world_statistics,
