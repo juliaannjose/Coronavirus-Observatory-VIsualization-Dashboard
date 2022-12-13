@@ -14,16 +14,16 @@ def interactive_map():
     )
 
     with confirmed:
-        with st.spinner("Loading graphs..."):
+        with st.spinner("Loading Graphs..."):
             st.plotly_chart(get_confirmed(), use_container_width=True)
     with deaths:
-        with st.spinner("Loading graphs..."):
+        with st.spinner("Loading Graphs..."):
             st.plotly_chart(get_deaths(), use_container_width=True)
     with recovered:
-        with st.spinner("Loading graphs..."):
+        with st.spinner("Loading Graphs..."):
             st.plotly_chart(get_recovered(), use_container_width=True)
     with vaccinated:
-        with st.spinner("Loading graphs..."):
+        with st.spinner("Loading Graphs..."):
             st.plotly_chart(get_vaccinated(), use_container_width=True)
 
 
@@ -47,13 +47,14 @@ def country_statistics():
     with col2:
         startYear = st.selectbox("Start year", (years))
         endYear = st.selectbox("End year", (years))
-
     if st.button("get results"):
-        total, result = get_stats(df, startMonth, startYear, endMonth, endYear, country)
+        with st.spinner("Loading Graphs..."):
+            total, result = get_stats(
+                df, startMonth, startYear, endMonth, endYear, country
+            )
 
-        st.write("Total deaths in this time period:", total)
-        plots = get_plot_rate(result)
-
+            st.write("Total no. of deaths in this time period:", total)
+            plots = get_plot_rate(result)
         st.pyplot(plots)
 
 
@@ -143,7 +144,7 @@ def search_engine():
     query = st.text_input("Search for an article")
     # milvus search limit - 16384
     no_of_results = st.slider(
-        "number of search results", min_value=10, max_value=16384, value=10
+        "number of search results", min_value=1, max_value=16384, value=50
     )
     if query:
         txt = f'<p style="font-style:italic;color:gray;">Showing top {no_of_results} related articles</p>'

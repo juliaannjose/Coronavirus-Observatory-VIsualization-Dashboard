@@ -37,6 +37,11 @@ def confirmed_cases():
     cols_to_drop = [col for col in worldmap_df.columns if col not in cols_to_keep]
     worldmap_df = worldmap_df.drop(*cols_to_drop)
     worldmap_pd_df = worldmap_df.toPandas()
+    worldmap_pd_df.update(
+        worldmap_pd_df.sort_values(["administrative_area_level_1", "date"])
+        .groupby("administrative_area_level_1")["confirmed"]
+        .ffill()
+    )
 
     # plotly slider widget doesn't allow python "datetime" types
     worldmap_pd_df.date = worldmap_pd_df.date.astype(str)
@@ -78,6 +83,11 @@ def death_cases():
     cols_to_drop = [col for col in worldmap_df.columns if col not in cols_to_keep]
     worldmap_df = worldmap_df.drop(*cols_to_drop)
     worldmap_pd_df = worldmap_df.toPandas()
+    worldmap_pd_df.update(
+        worldmap_pd_df.sort_values(["administrative_area_level_1", "date"])
+        .groupby("administrative_area_level_1")["deaths"]
+        .ffill()
+    )
 
     # plotly slider widget doesn't allow python "datetime" types
     worldmap_pd_df.date = worldmap_pd_df.date.astype(str)
@@ -119,6 +129,11 @@ def recovered_cases():
     cols_to_drop = [col for col in worldmap_df.columns if col not in cols_to_keep]
     worldmap_df = worldmap_df.drop(*cols_to_drop)
     worldmap_pd_df = worldmap_df.toPandas()
+    worldmap_pd_df.update(
+        worldmap_pd_df.sort_values(["administrative_area_level_1", "date"])
+        .groupby("administrative_area_level_1")["recovered"]
+        .ffill()
+    )
 
     # plotly slider widget doesn't allow python "datetime" types
     worldmap_pd_df.date = worldmap_pd_df.date.astype(str)
@@ -160,6 +175,11 @@ def vaccinated_cases():
     cols_to_drop = [col for col in worldmap_df.columns if col not in cols_to_keep]
     worldmap_df = worldmap_df.drop(*cols_to_drop)
     worldmap_pd_df = worldmap_df.toPandas()
+    worldmap_pd_df.update(
+        worldmap_pd_df.sort_values(["administrative_area_level_1", "date"])
+        .groupby("administrative_area_level_1")["vaccines"]
+        .ffill()
+    )
 
     # plotly slider widget doesn't allow python "datetime" types
     worldmap_pd_df.date = worldmap_pd_df.date.astype(str)
