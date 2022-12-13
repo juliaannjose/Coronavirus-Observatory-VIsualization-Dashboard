@@ -11,7 +11,13 @@ from src.analytics.worldmap import (
     recovered_cases,
     vaccinated_cases,
 )
-from src.analytics.graphs import getdata, getstats, plot_rate, min_policy, max_policy
+from src.analytics.graphs import (
+    getdata,
+    getstats,
+    plot_rate,
+    min_policy,
+    max_policy,
+)
 
 
 def get_policy_descriptions():

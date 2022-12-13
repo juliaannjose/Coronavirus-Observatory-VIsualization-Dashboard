@@ -27,7 +27,9 @@ def interactive_map():
             st.plotly_chart(get_vaccinated(), use_container_width=True)
 
 
-def world_statistics():
+def country_statistics():
+    txt = f'<p style="font-size: 60px" align="left"> Country statistics</p> <br>'
+    st.markdown(txt, unsafe_allow_html=True)
     df = get_data()
     country = st.selectbox(
         "Which country?",
@@ -35,7 +37,7 @@ def world_statistics():
     )
 
     col1, col2, _, _, _, _ = st.columns(6)
-    months = ["0" + str(x) for x in range(1, 10)]
+    months = ["0" + str(x) for x in range(1, 11)]
     months.append("11")
     months.append("12")
     years = ["2020", "2021", "2022"]
@@ -53,11 +55,13 @@ def world_statistics():
 
             st.write("Total no. of deaths in this time period:", total)
             plots = get_plot_rate(result)
-
         st.pyplot(plots)
 
 
 def covid_policies():
+    txt = f'<p style="font-size: 60px" align="left"> Country policies</p> <br>'
+    st.markdown(txt, unsafe_allow_html=True)
+
     df = get_data()
     country = st.selectbox(
         "Which country?",
@@ -108,6 +112,8 @@ def covid_policies():
         vaccination_policy,
         elderly_people_protection,
     ) = get_policy_descriptions()
+    txt = f'<p style="font-size: 25px" align="left"> <b>Policy description</b> </p>'
+    st.markdown(txt, unsafe_allow_html=True)
 
     st.write("School closing policy description", school_closing_policy)
     st.write("workplace closing  policy description", workplace_closing)
@@ -132,6 +138,9 @@ def covid_policies():
 
 
 def search_engine():
+
+    txt = f'<p style="font-size: 60px" align="left"> Article search engine </p>'
+    st.markdown(txt, unsafe_allow_html=True)
     query = st.text_input("Search for an article")
     # milvus search limit - 16384
     no_of_results = st.slider(
@@ -166,11 +175,35 @@ def search_engine():
                 else:
                     st.markdown("[View Paper](%s)" % link)
 
+def home_page_insights():
+    
+    txt = f' <p style="font-size: 70px" align="center"><b>Coronavirus Observatory VIsualization Dashboard</b></p> \
+    <p style="font-style:italic;color:gray;font-size: 20px" align="right">- Julia Jose (jj3545), Tanmay Khot (tsk9863), Sidharth Purohit (sp6365) </p> <br> \
+    <h3> The key features of our application are: </h3> \
+    <ul> \
+    <li><span style="font-size: 20px;"><mark><b>Article search</b></mark></span> \
+        <span style="font-size: 20px;">: To fetch research articles based on user input query</span> \
+    </li> \
+    <li><span style="font-size: 20px;"><mark><b>Country statistics</b></mark></span> \
+        <span style="font-size: 20px;">: To visualize the rate of change for confirmed cases, deaths, recovered cases and vaccinations for a particular country</span> \
+    </li> \
+    <li><span style="font-size: 20px;"><mark><b>Interactive Worldmap</b></mark></span> \
+        <span style="font-size: 20px;">: To visualize the impact of COVID for a particular country</span> \
+    </li> \
+    <li><span style="font-size: 20px;"><mark><b>Country policies</b></mark></span> \
+        <span style="font-size: 20px;">: To understand the policies implemented by a nation\'s government to tackle the spread of COVID</span> \
+    </li> \
+    </ul>' 
+
+    st.markdown(txt, unsafe_allow_html=True)
+        
+
 
 page_names_to_funcs = {
+    "Homepage": home_page_insights,
     "Interactive Map": interactive_map,
     "Policy Measures": covid_policies,
-    "World Statistics": world_statistics,
+    "Country Statistics": country_statistics,
     "Search Engine": search_engine,
 }
 
