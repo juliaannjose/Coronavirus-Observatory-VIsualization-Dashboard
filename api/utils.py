@@ -11,7 +11,13 @@ from src.analytics.worldmap import (
     recovered_cases,
     vaccinated_cases,
 )
-from src.analytics.graphs import getdata, getstats, plot_rate, min_policy, max_policy, home_page
+from src.analytics.graphs import (
+    getdata,
+    getstats,
+    plot_rate,
+    min_policy,
+    max_policy,
+)
 
 
 def get_policy_descriptions():
@@ -285,6 +291,3 @@ def get_min_policy(df, sm, sy, em, ey, country):
 
 def get_max_policy(df, sm, sy, em, ey, country):
     return max_policy(df, sm, sy, em, ey, country)
-
-def get_home_page():
-    return home_page()
