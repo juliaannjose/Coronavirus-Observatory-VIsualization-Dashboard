@@ -65,3 +65,21 @@ Specify the query using --query argument and the number of results using --no_of
 $ streamlit run api/main.py
 ```
 
+# COVID-19 Analytics
+
+Download the csv file corresponding to country-wise data (1.csv) from: 
+
+```
+https://covid19datahub.io/articles/data.html
+```
+
+COVID-19 related analytics can now be stood up by running: 
+
+
+```
+$ streamlit run api/main.py
+```
+
+ The above command will enable all other functionalities such as the policy measures function, covid-19 statistics, and the world heat (choropleth) map. 
+
+
