@@ -4,8 +4,8 @@ build/*
 search_system.egg-info/*
 
 #ignore dataset files
-data/raw/*
-data/artifacts/*
+data/raw/*.csv
+data/artifacts/*.csv
 output/Cosine_Sim_results.png
 output/L2_results.png
 
