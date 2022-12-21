@@ -4,8 +4,10 @@ Covid Semantic Search Engine and Data Analytics
 # Semantic Search System
 ## Setting up the Backend of the Search System
 
-### 1. Start Milvus Server
-Download and install Milvus Standalone using docker compose. Refer: https://milvus.io/docs/install_standalone-docker.md or follow the instructions below.
+### 1. Download the dataset from [here](https://www.kaggle.com/datasets/allen-institute-for-ai/CORD-19-research-challenge) (download metadata.csv) and place it in /data/raw/metadata.csv 
+
+### 2. Start Milvus Server
+Download and install Milvus Standalone using docker compose. Refer: [Installation Guide](https://milvus.io/docs/install_standalone-docker.md) or follow the instructions below.
 
 ```
 $ wget https://raw.githubusercontent.com/milvus-io/milvus/master/deployments/docker/standalone/docker-compose.yml -O docker-compose.yml
@@ -21,14 +23,14 @@ milvus-minio        /usr/bin/docker-entrypoint ...   Up (healthy)   9000/tcp
 milvus-standalone   /tini -- milvus run standalone   Up             0.0.0.0:19530->19530/tcp, 0.0.0.0:9091->9091/tcp
 
 ```
-### 2. Start Postgres Server
+### 3. Start Postgres Server
 
 ```
 $ docker run --name postgres0 -d  -p 5438:5432 -e POSTGRES_HOST_AUTH_METHOD=trust postgres
 ```
 **docker ps -a** should show that it is up and running
 
-### 3. Dumping data into Milvus and Postgres
+### 4. Dumping data into Milvus and Postgres
 We will use Milvus to store vectors and Postgres to store metadata corresponding to these vectors. The milvus id corresponding to the milvus vector will act as the primary key for both these tables. Postgres stores metadata such as the title of the article, abstract, authors, and the url. 
 
 Before doing so, install the source code using the lines below at the root of this repo.  
@@ -40,7 +42,7 @@ $ python -m pip install .
 Now run the following to build the backend of the search system
 
 ```
-$ python cli/build.py --data_path "/abs/path/to/data.csv"
+$ python cli/build.py --data_path "/abs/path/to/data/raw/metadata.csv"
 ``` 
 Specify the absolute path to the dataset using --data_path and the model name using --model_name. The model name is an optional argument and will use "multi-qa-MiniLM-L6-cos-v1" unless otherwise specified. 
 
@@ -67,11 +69,8 @@ $ streamlit run api/main.py
 
 # COVID-19 Analytics
 
-Download the csv file corresponding to country-wise data (1.csv) from: 
+Download the csv file corresponding to country-wise data (1.csv) from [here](https://covid19datahub.io/articles/data.html) and place it in /data/raw/country.csv
 
-```
-https://covid19datahub.io/articles/data.html
-```
 
 COVID-19 related analytics can now be stood up by running: 
 
