@@ -1,0 +1,1 @@
+#### While building the search system, certain artifact files get downloaded to the local system and will be placed under this folder
